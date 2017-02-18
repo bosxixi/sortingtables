@@ -49,6 +49,7 @@ var SortingTable = (function () {
         var _this = this;
         var ths = this.thead.children;
         for (var i = 0; i < ths.length; i++) {
+            // do not bind for empty column
             if (ths[i].textContent == "") {
                 continue;
             }
@@ -174,4 +175,3 @@ var tbodys = document.getElementsByTagName("tbody");
 for (var i = 0; i < tbodys.length; i++) {
     var st = new SortingTable(tbodys.item(i), new RowComparer());
 }
-//# sourceMappingURL=sortingtable.js.map
