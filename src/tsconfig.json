@@ -8,6 +8,6 @@
         "sourceMap": true
     },
     "files": [
-        "sortingtable.ts"
+        "sortingtables.ts"
     ]
 }

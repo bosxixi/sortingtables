@@ -53,6 +53,7 @@ class SortingTable {
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
+        this.addCursorStyleTheadColumn();
         this.bindThead();
 
     }
@@ -73,6 +74,13 @@ class SortingTable {
     private removeOrderingSapn(column: Element) {
         for (let i = 0; i < column.children.length; i++) {
             column.removeChild(column.children.item(i));
+        }
+    }
+    private addCursorStyleTheadColumn() {
+        var ths = this.thead.children;
+        for (var i = 0; i < ths.length; i++) {
+            var column = ths[i];
+            column.setAttribute("style", "cursor: pointer;");
         }
     }
     private addElementToTheadColumn(column: Element, orderBy: OrderBy) {

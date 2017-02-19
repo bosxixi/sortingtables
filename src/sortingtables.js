@@ -43,13 +43,13 @@ var SortingTable = (function () {
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
+        this.addCursorStyleTheadColumn();
         this.bindThead();
     }
     SortingTable.prototype.bindThead = function () {
         var _this = this;
         var ths = this.thead.children;
         for (var i = 0; i < ths.length; i++) {
-            // do not bind for empty column
             if (ths[i].textContent == "") {
                 continue;
             }
@@ -63,6 +63,13 @@ var SortingTable = (function () {
     SortingTable.prototype.removeOrderingSapn = function (column) {
         for (var i_1 = 0; i_1 < column.children.length; i_1++) {
             column.removeChild(column.children.item(i_1));
+        }
+    };
+    SortingTable.prototype.addCursorStyleTheadColumn = function () {
+        var ths = this.thead.children;
+        for (var i = 0; i < ths.length; i++) {
+            var column = ths[i];
+            column.setAttribute("style", "cursor: pointer;");
         }
     };
     SortingTable.prototype.addElementToTheadColumn = function (column, orderBy) {
@@ -175,3 +182,4 @@ var tbodys = document.getElementsByTagName("tbody");
 for (var i = 0; i < tbodys.length; i++) {
     var st = new SortingTable(tbodys.item(i), new RowComparer());
 }
+//# sourceMappingURL=sortingtables.js.map
