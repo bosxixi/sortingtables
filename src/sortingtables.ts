@@ -38,64 +38,98 @@ class RowComparer implements SortingComparer<ComparableRow> {
         }
     }
 }
-class SortingTable {
+class SortingTableOptions {
+    public readonly excludeColumns: string[];
+    public readonly includeColumns: string[];
+    public readonly descending: HTMLSpanElement;
+    public readonly ascending: HTMLSpanElement;
     public comparer: SortingComparer<ComparableRow>;
+    constructor(comparer: SortingComparer<ComparableRow>, excludeColumns?: string[], includeColums?: string[], descending?: HTMLSpanElement, ascending?: HTMLSpanElement) {
+        if (excludeColumns != null && includeColums != null) {
+            console.log("warning: setting both excludeColumns and includeColumns.")
+        }
+        if (descending == null) {
+            var span = document.createElement("span");
+            span.className = "glyphicon glyphicon-triangle-top";
+            this.descending = span;
+        } else {
+            this.descending = descending;
+        }
+        if (ascending == null) {
+            var span = document.createElement("span");
+            span.className = "glyphicon glyphicon-triangle-bottom";
+            this.ascending = span;
+        } else {
+            this.ascending = ascending;
+        }
+        this.excludeColumns = excludeColumns;
+        this.includeColumns = includeColums;
+        this.comparer = comparer;
+    }
+}
+class SortingTable {
+    readonly options: SortingTableOptions;
     readonly tbody: HTMLElement;
     readonly thead: Element;
     readonly headColumnNames: string[];
     readonly rows: Element[];
     private orderedRows: Element[];
-    private comparableRows: ComparableRow[];
-    constructor(tbody: HTMLElement, comparer: SortingComparer<ComparableRow>) {
-        this.comparer = comparer;
+    constructor(tbody: HTMLElement, options: SortingTableOptions) {
+        this.options = options;
         this.tbody = tbody;
         this.thead = this.tbody.children.item(0);
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
-        this.addCursorStyleTheadColumn();
         this.bindThead();
 
     }
     private bindThead() {
         var ths = this.thead.children;
         for (var i = 0; i < ths.length; i++) {
+            let column = ths[i];
             // do not bind for empty column
-            if (ths[i].textContent == "") {
+            if (column.textContent == "") {
                 continue;
             }
-            ths[i].addEventListener("click", (e: Event) => {
-                let et = <Element>e.currentTarget;
-                let columnName = et.textContent.trim();
-                this.toggleSorting(columnName);
-            }, false);
+            // checking excludeList
+            if (this.options.excludeColumns != null && this.options.excludeColumns.find((v: string, i: number, o: string[]) => { return v == column.textContent.trim(); })) {
+                continue;
+            }
+
+            // checking includeList
+            if (this.options.includeColumns != null) {
+                if (this.options.includeColumns.find((v: string, i: number, o: string[]) => { return v == column.textContent.trim(); })) {
+                    this.setStyleAddEventListener(column);
+                }
+            } else {
+                this.setStyleAddEventListener(column);
+            }
+
         }
     }
+
+    private setStyleAddEventListener(column: Element) {
+        column.setAttribute("style", "cursor: pointer;");
+        column.addEventListener("click", (e: Event) => {
+            let et = <Element>e.currentTarget;
+            let columnName = et.textContent.trim();
+            this.toggleSorting(columnName);
+        }, false);
+    }
+
     private removeOrderingSapn(column: Element) {
         for (let i = 0; i < column.children.length; i++) {
             column.removeChild(column.children.item(i));
         }
     }
-    private addCursorStyleTheadColumn() {
-        var ths = this.thead.children;
-        for (var i = 0; i < ths.length; i++) {
-            var column = ths[i];
-               // do not add style for empty column
-            if (column.textContent == "") {
-                continue;
-            }
-            column.setAttribute("style", "cursor: pointer;");
-        }
-    }
     private addElementToTheadColumn(column: Element, orderBy: OrderBy) {
         this.removeOrderingSapn(column);
-        var span = document.createElement("span");
+
         if (orderBy == OrderBy.Ascending) {
-            span.className = "glyphicon glyphicon-triangle-top";
-            column.appendChild(span);
+            column.appendChild(this.options.ascending);
         } else {
-            span.className = "glyphicon glyphicon-triangle-bottom";
-            column.appendChild(span);
+            column.appendChild(this.options.descending);
         }
     }
     private toggleSorting(columnName: string) {
@@ -133,12 +167,12 @@ class SortingTable {
         let orderedRows: Element[] = [];
         var unordered = this.getComparableRows(columnName);
         if (orderBy == OrderBy.Descending) {
-            unordered.sort(this.comparer.Descending).forEach(function (row: ComparableRow) {
+            unordered.sort(this.options.comparer.Descending).forEach(function (row: ComparableRow) {
                 orderedRows.push(row.element);
             });
         }
         else {
-            unordered.sort(this.comparer.Ascending).forEach(function (row: ComparableRow) {
+            unordered.sort(this.options.comparer.Ascending).forEach(function (row: ComparableRow) {
                 orderedRows.push(row.element);
             });
         }
@@ -191,8 +225,10 @@ class SortingTable {
     }
 }
 
+let rowComparer = new RowComparer();
+let options = new SortingTableOptions(rowComparer, null, null);
 var tbodys = document.getElementsByTagName("tbody");
 for (var i = 0; i < tbodys.length; i++) {
-    var st = new SortingTable(tbodys.item(i), new RowComparer());
+    var st = new SortingTable(tbodys.item(i), options);
 }
 

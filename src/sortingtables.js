@@ -35,56 +35,88 @@ var RowComparer = (function () {
     };
     return RowComparer;
 }());
-var SortingTable = (function () {
-    function SortingTable(tbody, comparer) {
+var SortingTableOptions = (function () {
+    function SortingTableOptions(comparer, excludeColumns, includeColums, descending, ascending) {
+        if (excludeColumns != null && includeColums != null) {
+            console.log("warning: setting both excludeColumns and includeColumns.");
+        }
+        if (descending == null) {
+            var span = document.createElement("span");
+            span.className = "glyphicon glyphicon-triangle-top";
+            this.descending = span;
+        }
+        else {
+            this.descending = descending;
+        }
+        if (ascending == null) {
+            var span = document.createElement("span");
+            span.className = "glyphicon glyphicon-triangle-bottom";
+            this.ascending = span;
+        }
+        else {
+            this.ascending = ascending;
+        }
+        this.excludeColumns = excludeColumns;
+        this.includeColumns = includeColums;
         this.comparer = comparer;
+    }
+    return SortingTableOptions;
+}());
+var SortingTable = (function () {
+    function SortingTable(tbody, options) {
+        this.options = options;
         this.tbody = tbody;
         this.thead = this.tbody.children.item(0);
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
-        this.addCursorStyleTheadColumn();
         this.bindThead();
     }
     SortingTable.prototype.bindThead = function () {
-        var _this = this;
         var ths = this.thead.children;
-        for (var i = 0; i < ths.length; i++) {
-            if (ths[i].textContent == "") {
-                continue;
+        var _loop_1 = function () {
+            var column = ths[i];
+            if (column.textContent == "") {
+                return "continue";
             }
-            ths[i].addEventListener("click", function (e) {
-                var et = e.currentTarget;
-                var columnName = et.textContent.trim();
-                _this.toggleSorting(columnName);
-            }, false);
+            if (this_1.options.excludeColumns != null && this_1.options.excludeColumns.find(function (v, i, o) { return v == column.textContent.trim(); })) {
+                return "continue";
+            }
+            if (this_1.options.includeColumns != null) {
+                if (this_1.options.includeColumns.find(function (v, i, o) { return v == column.textContent.trim(); })) {
+                    this_1.setStyleAddEventListener(column);
+                }
+            }
+            else {
+                this_1.setStyleAddEventListener(column);
+            }
+        };
+        var this_1 = this;
+        for (var i = 0; i < ths.length; i++) {
+            _loop_1();
         }
+    };
+    SortingTable.prototype.setStyleAddEventListener = function (column) {
+        var _this = this;
+        column.setAttribute("style", "cursor: pointer;");
+        column.addEventListener("click", function (e) {
+            var et = e.currentTarget;
+            var columnName = et.textContent.trim();
+            _this.toggleSorting(columnName);
+        }, false);
     };
     SortingTable.prototype.removeOrderingSapn = function (column) {
         for (var i_1 = 0; i_1 < column.children.length; i_1++) {
             column.removeChild(column.children.item(i_1));
         }
     };
-    SortingTable.prototype.addCursorStyleTheadColumn = function () {
-        var ths = this.thead.children;
-        for (var i = 0; i < ths.length; i++) {
-            var column = ths[i];
-            if (column.textContent == "") {
-                continue;
-            }
-            column.setAttribute("style", "cursor: pointer;");
-        }
-    };
     SortingTable.prototype.addElementToTheadColumn = function (column, orderBy) {
         this.removeOrderingSapn(column);
-        var span = document.createElement("span");
         if (orderBy == OrderBy.Ascending) {
-            span.className = "glyphicon glyphicon-triangle-top";
-            column.appendChild(span);
+            column.appendChild(this.options.ascending);
         }
         else {
-            span.className = "glyphicon glyphicon-triangle-bottom";
-            column.appendChild(span);
+            column.appendChild(this.options.descending);
         }
     };
     SortingTable.prototype.toggleSorting = function (columnName) {
@@ -123,12 +155,12 @@ var SortingTable = (function () {
         var orderedRows = [];
         var unordered = this.getComparableRows(columnName);
         if (orderBy == OrderBy.Descending) {
-            unordered.sort(this.comparer.Descending).forEach(function (row) {
+            unordered.sort(this.options.comparer.Descending).forEach(function (row) {
                 orderedRows.push(row.element);
             });
         }
         else {
-            unordered.sort(this.comparer.Ascending).forEach(function (row) {
+            unordered.sort(this.options.comparer.Ascending).forEach(function (row) {
                 orderedRows.push(row.element);
             });
         }
@@ -181,8 +213,10 @@ var SortingTable = (function () {
     };
     return SortingTable;
 }());
+var rowComparer = new RowComparer();
+var options = new SortingTableOptions(rowComparer, null, null);
 var tbodys = document.getElementsByTagName("tbody");
 for (var i = 0; i < tbodys.length; i++) {
-    var st = new SortingTable(tbodys.item(i), new RowComparer());
+    var st = new SortingTable(tbodys.item(i), options);
 }
 //# sourceMappingURL=sortingtables.js.map
