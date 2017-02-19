@@ -112,8 +112,8 @@ class SortingTable {
     private setStyleAddEventListener(column: Element) {
         column.setAttribute("style", "cursor: pointer;");
         column.addEventListener("click", (e: Event) => {
-            let et = <Element>e.currentTarget;
-            let columnName = et.textContent.trim();
+            let ct = <Element>e.currentTarget;
+            let columnName = ct.textContent.trim();
             this.toggleSorting(columnName);
         }, false);
     }

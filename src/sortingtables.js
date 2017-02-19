@@ -100,8 +100,8 @@ var SortingTable = (function () {
         var _this = this;
         column.setAttribute("style", "cursor: pointer;");
         column.addEventListener("click", function (e) {
-            var et = e.currentTarget;
-            var columnName = et.textContent.trim();
+            var ct = e.currentTarget;
+            var columnName = ct.textContent.trim();
             _this.toggleSorting(columnName);
         }, false);
     };
