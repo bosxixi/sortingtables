@@ -79,11 +79,11 @@ var SortingTable = (function () {
             if (column.textContent == "") {
                 continue;
             }
-            if (this.options.excludeColumns != null && !this.options.excludeColumns.indexOf(column.textContent.trim())) {
+            if (this.options.excludeColumns != null && this.options.excludeColumns.indexOf(column.textContent.trim()) != -1) {
                 continue;
             }
             if (this.options.includeColumns != null) {
-                if (!this.options.includeColumns.indexOf(column.textContent.trim())) {
+                if (this.options.includeColumns.indexOf(column.textContent.trim()) != -1) {
                     this.setStyleAddEventListener(column);
                 }
             }
