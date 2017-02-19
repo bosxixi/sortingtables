@@ -69,6 +69,9 @@ var SortingTable = (function () {
         var ths = this.thead.children;
         for (var i = 0; i < ths.length; i++) {
             var column = ths[i];
+            if (column.textContent == "") {
+                continue;
+            }
             column.setAttribute("style", "cursor: pointer;");
         }
     };

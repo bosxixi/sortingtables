@@ -7,7 +7,7 @@ class ComparableRow {
     }
 }
 
-interface ValueComparer<T> {
+interface SortingComparer<T> {
     Ascending(a: T, b: T): number;
     Descending(a: T, b: T): number;
 }
@@ -15,7 +15,7 @@ enum OrderBy {
     Ascending,
     Descending,
 }
-class RowComparer implements ValueComparer<ComparableRow> {
+class RowComparer implements SortingComparer<ComparableRow> {
     public Descending(a: ComparableRow, b: ComparableRow): number {
         let aNumber = Number(a.key);
         let bNumber = Number(b.key);
@@ -39,14 +39,14 @@ class RowComparer implements ValueComparer<ComparableRow> {
     }
 }
 class SortingTable {
-    public comparer: ValueComparer<ComparableRow>;
+    public comparer: SortingComparer<ComparableRow>;
     readonly tbody: HTMLElement;
     readonly thead: Element;
     readonly headColumnNames: string[];
     readonly rows: Element[];
     private orderedRows: Element[];
     private comparableRows: ComparableRow[];
-    constructor(tbody: HTMLElement, comparer: ValueComparer<ComparableRow>) {
+    constructor(tbody: HTMLElement, comparer: SortingComparer<ComparableRow>) {
         this.comparer = comparer;
         this.tbody = tbody;
         this.thead = this.tbody.children.item(0);
@@ -80,6 +80,10 @@ class SortingTable {
         var ths = this.thead.children;
         for (var i = 0; i < ths.length; i++) {
             var column = ths[i];
+               // do not add style for empty column
+            if (column.textContent == "") {
+                continue;
+            }
             column.setAttribute("style", "cursor: pointer;");
         }
     }
