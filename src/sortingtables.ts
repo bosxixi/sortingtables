@@ -167,12 +167,12 @@ class SortingTable {
         let orderedRows: Element[] = [];
         var unordered = this.getComparableRows(columnName);
         if (orderBy == OrderBy.Descending) {
-            unordered.sort(this.options.comparer.Descending).forEach(function (row: ComparableRow) {
+            unordered.sort(this.options.comparer.Descending).forEach((row: ComparableRow) => {
                 orderedRows.push(row.element);
             });
         }
         else {
-            unordered.sort(this.options.comparer.Ascending).forEach(function (row: ComparableRow) {
+            unordered.sort(this.options.comparer.Ascending).forEach((row: ComparableRow) => {
                 orderedRows.push(row.element);
             });
         }
