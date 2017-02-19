@@ -93,13 +93,13 @@ class SortingTable {
                 continue;
             }
             // checking excludeList
-            if (this.options.excludeColumns != null && this.options.excludeColumns.find((v: string, i: number, o: string[]) => { return v == column.textContent.trim(); })) {
+            if (this.options.excludeColumns != null && !this.options.excludeColumns.indexOf(column.textContent.trim())) {
                 continue;
             }
 
             // checking includeList
             if (this.options.includeColumns != null) {
-                if (this.options.includeColumns.find((v: string, i: number, o: string[]) => { return v == column.textContent.trim(); })) {
+                if (!this.options.includeColumns.indexOf(column.textContent.trim())) {
                     this.setStyleAddEventListener(column);
                 }
             } else {

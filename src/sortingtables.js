@@ -74,26 +74,22 @@ var SortingTable = (function () {
     }
     SortingTable.prototype.bindThead = function () {
         var ths = this.thead.children;
-        var _loop_1 = function () {
+        for (var i = 0; i < ths.length; i++) {
             var column = ths[i];
             if (column.textContent == "") {
-                return "continue";
+                continue;
             }
-            if (this_1.options.excludeColumns != null && this_1.options.excludeColumns.find(function (v, i, o) { return v == column.textContent.trim(); })) {
-                return "continue";
+            if (this.options.excludeColumns != null && !this.options.excludeColumns.indexOf(column.textContent.trim())) {
+                continue;
             }
-            if (this_1.options.includeColumns != null) {
-                if (this_1.options.includeColumns.find(function (v, i, o) { return v == column.textContent.trim(); })) {
-                    this_1.setStyleAddEventListener(column);
+            if (this.options.includeColumns != null) {
+                if (!this.options.includeColumns.indexOf(column.textContent.trim())) {
+                    this.setStyleAddEventListener(column);
                 }
             }
             else {
-                this_1.setStyleAddEventListener(column);
+                this.setStyleAddEventListener(column);
             }
-        };
-        var this_1 = this;
-        for (var i = 0; i < ths.length; i++) {
-            _loop_1();
         }
     };
     SortingTable.prototype.setStyleAddEventListener = function (column) {
