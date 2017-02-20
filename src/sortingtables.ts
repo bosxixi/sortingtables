@@ -24,7 +24,6 @@ class RowComparer implements SortingComparer<ComparableRow> {
             return aNumber - bNumber;
         }
         else {
-            console.log("NaN");
             return a.key.toLowerCase().localeCompare(b.key.toLowerCase());
         }
     }
@@ -36,7 +35,6 @@ class RowComparer implements SortingComparer<ComparableRow> {
             return bNumber - aNumber;
         }
         else {
-            console.log("NaN");
             return b.key.toLowerCase().localeCompare(a.key.toLowerCase());
         }
     }
@@ -72,15 +70,25 @@ class SortingTableOptions {
 }
 class SortingTable {
     readonly options: SortingTableOptions;
+    readonly table: HTMLElement;
     readonly tbody: HTMLElement;
     readonly thead: Element;
     readonly headColumnNames: string[];
     readonly rows: Element[];
+    readonly rowsBeginIndex: number;
+    readonly hasThead: boolean;
     private orderedRows: Element[];
-    constructor(tbody: HTMLElement, options: SortingTableOptions) {
+    constructor(table: HTMLElement, options: SortingTableOptions) {
         this.options = options;
-        this.tbody = tbody;
-        this.thead = this.tbody.children.item(0);
+        this.table = table;
+        this.tbody = table.querySelector("tbody");
+        let thead = table.querySelector("thead");
+        if (thead == null) {
+            this.thead = this.tbody.children.item(0);
+            this.rowsBeginIndex = 1;
+        } else {
+            throw new TypeError("FATAL: do not support thead tag table.")
+        }
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
@@ -214,7 +222,7 @@ class SortingTable {
     private getRows(): Element[] {
         var allRowsIncludingHead = this.tbody.children;
         let elements: Element[] = [];
-        for (var i = 1; i < allRowsIncludingHead.length; i++) {
+        for (var i = this.rowsBeginIndex; i < allRowsIncludingHead.length; i++) {
             let e = allRowsIncludingHead.item(i);
             elements.push(e);
         }

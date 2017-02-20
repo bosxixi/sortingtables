@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <table class="table table-bordered table-hover table-responsive table-edit">
+        <thead>
+            <tr class="health-data-header">
+                <th class="health-data-header-first"></th>
+                <th>
+                    姓名
+                </th>
+
+                <th>
+                    <!--     <a href="/HealthData/Index/7?sort=1&amp;asc=False&amp;page=1&amp;edit=False">-->
+                    50米
+                    <!--    </a>-->
+
+                </th>
+                <th>
+                    <!--     <a href="/HealthData/Index/7?sort=6&amp;asc=False&amp;page=1&amp;edit=False">-->
+                    100米
+                    <!--     </a>-->
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td style="cursor: pointer;">
+                    <span class="glyphicon glyphicon-menu-hamburger student-health-data-detail-button" onclick="window.location.href='/HealthData/Details/38'"></span>
+                </td>
+                <td style="cursor: pointer;">纪晨月</td>
+                <td class="health-data-input" id="38" name="1" style="cursor: pointer;">
+                    23<span></span>
+                </td>
+                <td class="health-data-input" id="38" name="6" style="cursor: pointer;">
+                    85<span></span>
+                </td>
+            </tr>
+            <tr>
+                <td data-columnname="">
+                    <span class="glyphicon glyphicon-menu-hamburger student-health-data-detail-button" onclick="window.location.href='/HealthData/Details/36'"></span>
+                </td>
+                <td data-columnname="纪晨月">王俊鑫</td>
+                <td class="health-data-input" id="36" name="1" data-columnname="">
+                    15<span></span>
+                </td>
+                <td class="health-data-input" id="36" name="6" data-columnname="">
+                    16<span></span>
+                </td>
+            </tr>
+            <tr>
+                <td data-columnname="">
+                    <span class="glyphicon glyphicon-menu-hamburger student-health-data-detail-button" onclick="window.location.href='/HealthData/Details/37'"></span>
+                </td>
+                <td data-columnname="纪晨月">杨彦程</td>
+                <td class="health-data-input" id="37" name="1" data-columnname="">
+                    14<span></span>
+                </td>
+                <td class="health-data-input" id="37" name="6" data-columnname="">
+                    18 <span></span>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <script type="text/javascript" src="sortingtables.js"></script>
+    <script type="text/javascript" src="sortingtables.automatic.js"></script>
+</body>
+
+</html>

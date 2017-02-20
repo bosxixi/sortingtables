@@ -20,7 +20,6 @@ var RowComparer = (function () {
             return aNumber - bNumber;
         }
         else {
-            console.log("NaN");
             return a.key.toLowerCase().localeCompare(b.key.toLowerCase());
         }
     };
@@ -31,7 +30,6 @@ var RowComparer = (function () {
             return bNumber - aNumber;
         }
         else {
-            console.log("NaN");
             return b.key.toLowerCase().localeCompare(a.key.toLowerCase());
         }
     };
@@ -65,10 +63,18 @@ var SortingTableOptions = (function () {
     return SortingTableOptions;
 }());
 var SortingTable = (function () {
-    function SortingTable(tbody, options) {
+    function SortingTable(table, options) {
         this.options = options;
-        this.tbody = tbody;
-        this.thead = this.tbody.children.item(0);
+        this.table = table;
+        this.tbody = table.querySelector("tbody");
+        var thead = table.querySelector("thead");
+        if (thead == null) {
+            this.thead = this.tbody.children.item(0);
+            this.rowsBeginIndex = 1;
+        }
+        else {
+            throw new TypeError("FATAL: do not support thead tag table.");
+        }
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
@@ -197,7 +203,7 @@ var SortingTable = (function () {
     SortingTable.prototype.getRows = function () {
         var allRowsIncludingHead = this.tbody.children;
         var elements = [];
-        for (var i = 1; i < allRowsIncludingHead.length; i++) {
+        for (var i = this.rowsBeginIndex; i < allRowsIncludingHead.length; i++) {
             var e = allRowsIncludingHead.item(i);
             elements.push(e);
         }
