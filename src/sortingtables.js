@@ -20,6 +20,7 @@ var RowComparer = (function () {
             return aNumber - bNumber;
         }
         else {
+            console.log("NaN");
             return a.key.toLowerCase().localeCompare(b.key.toLowerCase());
         }
     };
@@ -30,6 +31,7 @@ var RowComparer = (function () {
             return bNumber - aNumber;
         }
         else {
+            console.log("NaN");
             return b.key.toLowerCase().localeCompare(a.key.toLowerCase());
         }
     };
@@ -175,6 +177,9 @@ var SortingTable = (function () {
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];
             if (column.getAttribute("data-columnName") === columnName) {
+                if (column.getAttribute("data-value") != null) {
+                    return column.getAttribute("data-value");
+                }
                 return column.textContent.trim();
             }
         }

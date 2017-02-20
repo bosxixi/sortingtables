@@ -19,10 +19,12 @@ class RowComparer implements SortingComparer<ComparableRow> {
     public Descending(a: ComparableRow, b: ComparableRow): number {
         let aNumber = Number(a.key);
         let bNumber = Number(b.key);
+
         if (!isNaN(aNumber) && !isNaN(bNumber)) {
             return aNumber - bNumber;
         }
         else {
+            console.log("NaN");
             return a.key.toLowerCase().localeCompare(b.key.toLowerCase());
         }
     }
@@ -34,6 +36,7 @@ class RowComparer implements SortingComparer<ComparableRow> {
             return bNumber - aNumber;
         }
         else {
+            console.log("NaN");
             return b.key.toLowerCase().localeCompare(a.key.toLowerCase());
         }
     }
@@ -191,6 +194,9 @@ class SortingTable {
         for (var i = 0; i < columns.length; i++) {
             var column = columns[i];
             if (column.getAttribute("data-columnName") === columnName) {
+                if (column.getAttribute("data-value") != null) {
+                    return column.getAttribute("data-value");
+                }
                 return column.textContent.trim();
             }
         }
