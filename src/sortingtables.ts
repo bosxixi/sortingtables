@@ -72,11 +72,12 @@ class SortingTable {
     readonly options: SortingTableOptions;
     readonly table: HTMLElement;
     readonly tbody: HTMLElement;
-    readonly thead: Element;
+    readonly theadEmulate: Element;
     readonly headColumnNames: string[];
     readonly rows: Element[];
-    readonly rowsBeginIndex: number;
-    readonly hasThead: boolean;
+    readonly rowsBeginIndex: number = 1;
+    private hasThead: boolean;
+    private theadClone: Node;
     private orderedRows: Element[];
     constructor(table: HTMLElement, options: SortingTableOptions) {
         this.options = options;
@@ -84,10 +85,11 @@ class SortingTable {
         this.tbody = table.querySelector("tbody");
         let thead = table.querySelector("thead");
         if (thead == null) {
-            this.thead = this.tbody.children.item(0);
-            this.rowsBeginIndex = 1;
+            this.hasThead = false;
+            this.theadEmulate = this.tbody.children.item(0);
         } else {
-            throw new TypeError("FATAL: do not support thead tag table.")
+            this.removeTheadTagFromTable();
+            this.theadEmulate = this.tbody.children.item(0);
         }
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
@@ -95,8 +97,17 @@ class SortingTable {
         this.bindThead();
 
     }
+
+    private removeTheadTagFromTable() {
+        this.hasThead = true;
+        let theThead = this.table.children.item(0);// get thead
+        this.theadClone = theThead.cloneNode();// clone thead
+        let theTheadTrClone = theThead.children.item(0).cloneNode(true);// deep clone tr from thead
+        this.table.removeChild(theThead);// remove thead from table
+        this.table.children.item(0).insertBefore(theTheadTrClone, this.table.children.item(0).children.item(0));// insert tr into tbody.
+    }
     private bindThead() {
-        var ths = this.thead.children;
+        var ths = this.theadEmulate.children;
         for (var i = 0; i < ths.length; i++) {
             let column = ths[i];
             // do not bind for empty column
@@ -118,8 +129,12 @@ class SortingTable {
             }
 
         }
-    }
+    }   
 
+    private bringBackTheadToTable(){
+        this.theadClone.appendChild(this.tbody.children.item(0));
+        this.table.insertBefore(this.theadClone, this.table.children.item(0));
+    }
     private setStyleAddEventListener(column: Element) {
         column.setAttribute("style", "cursor: pointer;");
         column.addEventListener("click", (e: Event) => {
@@ -144,7 +159,7 @@ class SortingTable {
         }
     }
     private toggleSorting(columnName: string) {
-        var ths = this.thead.children;
+        var ths = this.theadEmulate.children;
         for (var i = 0; i < ths.length; i++) {
             var column = ths[i];
             if (column.textContent.trim() === columnName) {
@@ -168,9 +183,13 @@ class SortingTable {
     public orderBy(columnName: string, orderBy: OrderBy) {
         var orderedRows = this.getOrderedRows(columnName, orderBy);
         this.tbody.innerHTML = "";
-        this.tbody.appendChild(this.thead);
+        this.tbody.appendChild(this.theadEmulate);
         for (var i = 0; i < orderedRows.length; i++) {
             this.tbody.appendChild(orderedRows[i]);
+        }
+
+        if (this.hasThead) {
+            this.bringBackTheadToTable();
         }
     }
 
@@ -229,7 +248,7 @@ class SortingTable {
         return elements;
     }
     private getHeaderColumns(): string[] {
-        let first = this.thead.children;
+        let first = this.theadEmulate.children;
         var headerColumns: string[] = [];
         for (var i = 0; i < first.length; i++) {
             let e = first.item(i);

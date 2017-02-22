@@ -64,24 +64,34 @@ var SortingTableOptions = (function () {
 }());
 var SortingTable = (function () {
     function SortingTable(table, options) {
+        this.rowsBeginIndex = 1;
         this.options = options;
         this.table = table;
         this.tbody = table.querySelector("tbody");
         var thead = table.querySelector("thead");
         if (thead == null) {
-            this.thead = this.tbody.children.item(0);
-            this.rowsBeginIndex = 1;
+            this.hasThead = false;
+            this.theadEmulate = this.tbody.children.item(0);
         }
         else {
-            throw new TypeError("FATAL: do not support thead tag table.");
+            this.removeTheadTagFromTable();
+            this.theadEmulate = this.tbody.children.item(0);
         }
         this.headColumnNames = this.getHeaderColumns();
         this.rows = this.getRows();
         this.addHeadColumnNamesToEachRow();
         this.bindThead();
     }
+    SortingTable.prototype.removeTheadTagFromTable = function () {
+        this.hasThead = true;
+        var theThead = this.table.children.item(0);
+        this.theadClone = theThead.cloneNode();
+        var theTheadTrClone = theThead.children.item(0).cloneNode(true);
+        this.table.removeChild(theThead);
+        this.table.children.item(0).insertBefore(theTheadTrClone, this.table.children.item(0).children.item(0));
+    };
     SortingTable.prototype.bindThead = function () {
-        var ths = this.thead.children;
+        var ths = this.theadEmulate.children;
         for (var i = 0; i < ths.length; i++) {
             var column = ths[i];
             if (column.textContent == "") {
@@ -99,6 +109,10 @@ var SortingTable = (function () {
                 this.setStyleAddEventListener(column);
             }
         }
+    };
+    SortingTable.prototype.bringBackTheadToTable = function () {
+        this.theadClone.appendChild(this.tbody.children.item(0));
+        this.table.insertBefore(this.theadClone, this.table.children.item(0));
     };
     SortingTable.prototype.setStyleAddEventListener = function (column) {
         var _this = this;
@@ -124,7 +138,7 @@ var SortingTable = (function () {
         }
     };
     SortingTable.prototype.toggleSorting = function (columnName) {
-        var ths = this.thead.children;
+        var ths = this.theadEmulate.children;
         for (var i = 0; i < ths.length; i++) {
             var column = ths[i];
             if (column.textContent.trim() === columnName) {
@@ -149,9 +163,12 @@ var SortingTable = (function () {
     SortingTable.prototype.orderBy = function (columnName, orderBy) {
         var orderedRows = this.getOrderedRows(columnName, orderBy);
         this.tbody.innerHTML = "";
-        this.tbody.appendChild(this.thead);
+        this.tbody.appendChild(this.theadEmulate);
         for (var i = 0; i < orderedRows.length; i++) {
             this.tbody.appendChild(orderedRows[i]);
+        }
+        if (this.hasThead) {
+            this.bringBackTheadToTable();
         }
     };
     SortingTable.prototype.getOrderedRows = function (columnName, orderBy) {
@@ -210,7 +227,7 @@ var SortingTable = (function () {
         return elements;
     };
     SortingTable.prototype.getHeaderColumns = function () {
-        var first = this.thead.children;
+        var first = this.theadEmulate.children;
         var headerColumns = [];
         for (var i = 0; i < first.length; i++) {
             var e = first.item(i);
