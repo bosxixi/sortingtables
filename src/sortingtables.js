@@ -65,22 +65,24 @@ var SortingTableOptions = (function () {
 var SortingTable = (function () {
     function SortingTable(table, options) {
         this.rowsBeginIndex = 1;
-        this.options = options;
-        this.table = table;
-        this.tbody = table.querySelector("tbody");
-        var thead = table.querySelector("thead");
-        if (thead == null) {
-            this.hasThead = false;
-            this.theadEmulate = this.tbody.children.item(0);
+        if (table.getAttribute("data-ignore") != "true") {
+            this.options = options;
+            this.table = table;
+            this.tbody = table.querySelector("tbody");
+            var thead = table.querySelector("thead");
+            if (thead == null) {
+                this.hasThead = false;
+                this.theadEmulate = this.tbody.children.item(0);
+            }
+            else {
+                this.removeTheadTagFromTable();
+                this.theadEmulate = this.tbody.children.item(0);
+            }
+            this.headColumnNames = this.getHeaderColumns();
+            this.rows = this.getRows();
+            this.addHeadColumnNamesToEachRow();
+            this.bindThead();
         }
-        else {
-            this.removeTheadTagFromTable();
-            this.theadEmulate = this.tbody.children.item(0);
-        }
-        this.headColumnNames = this.getHeaderColumns();
-        this.rows = this.getRows();
-        this.addHeadColumnNamesToEachRow();
-        this.bindThead();
     }
     SortingTable.prototype.removeTheadTagFromTable = function () {
         this.hasThead = true;

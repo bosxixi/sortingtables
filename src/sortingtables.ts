@@ -80,22 +80,23 @@ class SortingTable {
     private theadClone: Node;
     private orderedRows: Element[];
     constructor(table: HTMLElement, options: SortingTableOptions) {
-        this.options = options;
-        this.table = table;
-        this.tbody = table.querySelector("tbody");
-        let thead = table.querySelector("thead");
-        if (thead == null) {
-            this.hasThead = false;
-            this.theadEmulate = this.tbody.children.item(0);
-        } else {
-            this.removeTheadTagFromTable();
-            this.theadEmulate = this.tbody.children.item(0);
+        if (table.getAttribute("data-ignore") != "true") {
+            this.options = options;
+            this.table = table;
+            this.tbody = table.querySelector("tbody");
+            let thead = table.querySelector("thead");
+            if (thead == null) {
+                this.hasThead = false;
+                this.theadEmulate = this.tbody.children.item(0);
+            } else {
+                this.removeTheadTagFromTable();
+                this.theadEmulate = this.tbody.children.item(0);
+            }
+            this.headColumnNames = this.getHeaderColumns();
+            this.rows = this.getRows();
+            this.addHeadColumnNamesToEachRow();
+            this.bindThead();
         }
-        this.headColumnNames = this.getHeaderColumns();
-        this.rows = this.getRows();
-        this.addHeadColumnNamesToEachRow();
-        this.bindThead();
-
     }
 
     private removeTheadTagFromTable() {
@@ -129,9 +130,9 @@ class SortingTable {
             }
 
         }
-    }   
+    }
 
-    private bringBackTheadToTable(){
+    private bringBackTheadToTable() {
         this.theadClone.appendChild(this.tbody.children.item(0));
         this.table.insertBefore(this.theadClone, this.table.children.item(0));
     }
