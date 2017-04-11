@@ -5,8 +5,8 @@ of cause you can customize for your needs.
 # How to use it ?
 simple. add two lines of code to your web page. to be aware that *sortingtables.automatic.js* should be in the bottom of inside **body** tag.
 ```html
-<script type="text/javascript" src="https://bosxixi.com/cdn/sortingtables-1.0.0.js"></script>
-<script type="text/javascript" src="https://bosxixi.com/cdn/sortingtables.automatic-1.0.0.js"></script>
+<script type="text/javascript" src="http://bosxixi.com/cdn/sortingtables-1.0.0.js"></script>
+<script type="text/javascript" src="http://bosxixi.com/cdn/sortingtables.automatic-1.0.0.js"></script>
 ```
 
 # How to customize for your needs ?
